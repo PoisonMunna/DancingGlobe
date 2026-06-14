@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dancing Globe</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <canvas id="globe"></canvas>
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="ld-content">
+            <div class="ld-ring">
+                <svg viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(79,142,255,0.1)" stroke-width="1"/>
+                    <circle cx="50" cy="50" r="44" fill="none" stroke="#4f8eff" stroke-width="2" stroke-dasharray="276" stroke-dashoffset="200" class="spin-ring"/>
+                </svg>
+            </div>
+            <div class="ld-label">GENERATING TEXTURES</div>
+            <div class="ld-bar"><div class="ld-fill" id="ld-fill"></div></div>
+            <div class="ld-pct" id="ld-pct">0%</div>
+        </div>
+    </div>
+
+    <!-- UI -->
+    <div id="ui">
+        <!-- Header -->
+        <header id="hdr">
+            <div class="logo">
+                <svg class="logo-svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+                    <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/>
+                    <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10A15.3 15.3 0 0112 2z"/>
+                </svg>
+                <div>
+                    <div class="logo-t">SOLAR SYSTEM</div>
+                    <div class="logo-s" id="body-subtitle">EARTH</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Planet Selector -->
+        <div id="planet-bar">
+            <button class="p-btn" data-body="sun"><span class="p-dot" style="--c:#ffaa00"></span>Sun</button>
+            <button class="p-btn" data-body="mercury"><span class="p-dot" style="--c:#b5a48a"></span>Mercury</button>
+            <button class="p-btn" data-body="venus"><span class="p-dot" style="--c:#e8c56d"></span>Venus</button>
+            <button class="p-btn active" data-body="earth"><span class="p-dot" style="--c:#4f8eff"></span>Earth</button>
+            <button class="p-btn" data-body="moon"><span class="p-dot" style="--c:#aaaaaa"></span>Moon</button>
+            <button class="p-btn" data-body="mars"><span class="p-dot" style="--c:#c1440e"></span>Mars</button>
+            <button class="p-btn" data-body="jupiter"><span class="p-dot" style="--c:#c89b6a"></span>Jupiter</button>
+            <button class="p-btn" data-body="saturn"><span class="p-dot" style="--c:#e8d5a3"></span>Saturn</button>
+            <button class="p-btn" data-body="uranus"><span class="p-dot" style="--c:#72c9d2"></span>Uranus</button>
+            <button class="p-btn" data-body="neptune"><span class="p-dot" style="--c:#3f54ba"></span>Neptune</button>
+        </div>
+
+        <!-- Info Panel -->
+        <div id="info-panel">
+            <div class="ip-header">
+                <div class="ip-icon" id="ip-icon-box">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                    </svg>
+                </div>
+                <div>
+                    <div class="ip-name" id="ip-name">Earth</div>
+                    <div class="ip-type" id="ip-type">Terrestrial Planet</div>
+                </div>
+            </div>
+            <div class="ip-divider"></div>
+            <div class="ip-stats">
+                <div class="ip-stat"><span class="ip-label">DIAMETER</span><span class="ip-val" id="ip-diameter">12,742 km</span></div>
+                <div class="ip-stat"><span class="ip-label">DISTANCE</span><span class="ip-val" id="ip-distance">149.6M km</span></div>
+                <div class="ip-stat"><span class="ip-label">DAY</span><span class="ip-val" id="ip-day">24h</span></div>
+                <div class="ip-stat"><span class="ip-label">YEAR</span><span class="ip-val" id="ip-year">365.25 days</span></div>
+                <div class="ip-stat"><span class="ip-label">MOONS</span><span class="ip-val" id="ip-moons">1</span></div>
+                <div class="ip-stat"><span class="ip-label">TEMP</span><span class="ip-val" id="ip-temp">15°C</span></div>
+                <div class="ip-stat"><span class="ip-label">GRAVITY</span><span class="ip-val" id="ip-gravity">9.8 m/s²</span></div>
+            </div>
+            <div class="ip-divider"></div>
+            <div class="ip-desc" id="ip-desc">The third planet from the Sun and the only astronomical object known to harbor life.</div>
+        </div>
+
+        <!-- Controls -->
+        <div id="toolbar">
+            <button class="t-btn" id="t-reset" title="Reset"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 109-9 9.75 9.75 0 00-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
+            <button class="t-btn active" id="t-spin" title="Auto Spin"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6"/><path d="M2.5 22v-6h6"/><path d="M2 11.5a10 10 0 0118.8-4.3"/><path d="M22 12.5a10 10 0 01-18.8 4.2"/></svg></button>
+            <div class="t-div"></div>
+            <button class="t-btn" id="t-zin" title="Zoom In"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+            <button class="t-btn" id="t-zout" title="Zoom Out"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+            <div class="t-div"></div>
+            <button class="t-btn" id="t-clouds" title="Clouds"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 109 20h9a5 5 0 000-10z"/></svg></button>
+            <button class="t-btn" id="t-ring" title="Rings"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="12" rx="10" ry="4"/><circle cx="12" cy="12" r="5"/></svg></button>
+        </div>
+
+        <!-- Rotation stats -->
+        <div id="rot-stats">
+            <div class="rs"><span class="rs-l">LAT</span><span class="rs-v" id="rs-lat">0.0°</span></div>
+            <div class="rs"><span class="rs-l">LNG</span><span class="rs-v" id="rs-lng">0.0°</span></div>
+            <div class="rs"><span class="rs-l">ZOOM</span><span class="rs-v" id="rs-zoom">1.0×</span></div>
+        </div>
+
+        <!-- Bottom -->
+        <div id="bottom">
+            <kbd>Drag</kbd> spin · <kbd>Scroll</kbd> zoom · <kbd>Space</kbd> auto · <kbd>1-0</kbd> planets
+        </div>
+    </div>
+
+    <div id="tip"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
